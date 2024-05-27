@@ -82,13 +82,13 @@ But reading the [docs](https://kubernetes.io/docs/setup/production-environment/t
 we just want to make sure the default route is using our static interface.
 
 Enable Powershell execution: `Set-Executionpolicy remotesigned`. \
-And run [hyperv-static-switch.ps1](#hyperv-static-switch.ps1) to create a static switch in Hyper-V, with the specs:
+And run [hyperv-static-switch.ps1](hyperv-static-switch.ps1) to create a static switch in Hyper-V, with the specs:
 * Name: lfclass
 * Subnet: 172.30.0.0/24
 * Gateway: 172.30.0.251
 
 ### Create Instances
-Now we can launch our instances, using [cloud-config.yaml](#cloud-config.yaml) to help configure the static IPs, and set the default route.
+Now we can launch our instances, using [cloud-config.yaml](cloud-config.yaml) to help configure the static IPs, and set the default route.
 
 For most of the course, we can use:
 ```
