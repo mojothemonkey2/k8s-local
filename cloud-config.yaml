@@ -1,0 +1,49 @@
+# (optional) add your ssh key to login as default user "ubuntu"
+user:
+  ssh_authorized_keys:
+    - ssh-rsa <your public ssh key>
+
+# append hosts, with static ips
+write_files:
+  - path: /etc/hosts
+    append: true
+    content: |
+      172.30.0.10 lfclass-proxy
+      172.30.0.11 lfclass-cp1 k8scp
+      172.30.0.12 lfclass-cp2
+      172.30.0.13 lfclass-cp3
+      172.30.0.21 lfclass-wk1
+
+# dont overwrite our /etc/hosts changes
+manage_etc_hosts: false
+
+packages:
+  - jq
+package_update: true
+package_upgrade: true
+package_reboot_if_required: true
+
+# multipass does not support network-config, nor templating. so we will update netplan config via cmds..
+runcmd:
+  - |
+    cat <<EOF >> /etc/netplan/60-lfclass.yaml
+    network:
+      version: 2
+      ethernets:
+        # disable the default routes from eth0..
+        eth0:
+          dhcp4-overrides:
+            use-routes: false  
+          dhcp6-overrides:
+            use-routes: false
+        # 2nd static interface..
+        eth1:
+          dhcp4: false
+          addresses:
+          - $(hostname -i)/24  # will pickup ip from /etc/hosts
+          routes:
+          - to: default
+            via: 172.30.0.251
+    EOF
+
+  - netplan apply # apply network changes for first run
